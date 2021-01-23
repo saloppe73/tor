@@ -1,3 +1,123 @@
+Changes in version 0.4.5.4-rc - 2021-01-22
+  Tor 0.4.5.4-rc is the second release candidate in its series. It fixes
+  several bugs present in previous releases.
+
+  We expect that the stable release will be the same, or almost the
+  same, as this release candidate, unless serious bugs are found.
+
+  o Major bugfixes (authority, IPv6):
+    - Do not consider multiple relays in the same IPv6 /64 network to be
+      sybils. Fixes bug 40243; bugfix on 0.4.5.1-alpha.
+
+  o Major bugfixes (directory cache, performance, windows):
+    - Limit the number of items in the consensus diff cache to 64 on
+      Windows. We hope this will mitigate an issue where Windows relay
+      operators reported Tor using 100% CPU, while we investigate better
+      solutions. Fixes bug 24857; bugfix on 0.3.1.1-alpha.
+
+  o Minor feature (build system):
+    - New "make lsp" command to generate the compile_commands.json file
+      used by the ccls language server. The "bear" program is needed for
+      this. Closes ticket 40227.
+
+  o Minor features (authority, logging):
+    - Log more information for directory authority operators during the
+      consensus voting process, and while processing relay descriptors.
+      Closes ticket 40245.
+    - Reject obsolete router/extrainfo descriptors earlier and more
+      quietly, to avoid spamming the logs. Fixes bug 40238; bugfix
+      on 0.4.5.1-alpha.
+
+  o Minor bugfixes (compilation):
+    - Fix another warning about unreachable fallthrough annotations when
+      building with "--enable-all-bugs-are-fatal" on some compilers.
+      Fixes bug 40241; bugfix on 0.4.5.3-rc.
+    - Change the linker flag ordering in our library search code so that
+      it works for compilers that need the libraries to be listed in the
+      right order. Fixes bug 33624; bugfix on 0.1.1.0-alpha.
+
+  o Minor bugfixes (config, bridge):
+    - Don't initiate a connection to a bridge configured to use a
+      missing transport. This change reverts an earlier fix that would
+      try to avoid such situations during configuration chcecking, but
+      which doesn't work with DisableNetwork. Fixes bug 40106; bugfix
+      on 0.4.5.1-alpha.
+
+  o Minor bugfixes (onion services):
+    - Avoid a non-fatal assertion in certain edge-cases when
+      establishing a circuit to an onion service. Fixes bug 32666;
+      bugfix on 0.3.0.3-alpha.
+
+  o Minor bugfixes (relay):
+    - If we were unable to build our descriptor, don't mark it as having
+      been advertised. Also remove an harmless BUG(). Fixes bug 40231;
+      bugfix on 0.4.5.1-alpha.
+
+
+Changes in version 0.4.5.3-rc - 2021-01-12
+  Tor 0.4.5.3-rc is the first release candidate in its series. It fixes
+  several bugs, including one that broke onion services on certain older
+  ARM CPUs, and another that made v3 onion services less reliable.
+
+  Though we anticipate that we'll be doing a bit more clean-up between
+  now and the stable release, we expect that our remaining changes will
+  be fairly simple. There will be at least one more release candidate
+  before 0.4.5.x is stable.
+
+  o Major bugfixes (onion service v3):
+    - Stop requiring a live consensus for v3 clients and services, and
+      allow a "reasonably live" consensus instead. This allows v3 onion
+      services to work even if the authorities fail to generate a
+      consensus for more than 2 hours in a row. Fixes bug 40237; bugfix
+      on 0.3.5.1-alpha.
+
+  o Minor features (crypto):
+    - Fix undefined behavior on our Keccak library. The bug only
+      appeared on platforms with 32-byte CPU cache lines (e.g. armv5tel)
+      and would result in wrong digests. Fixes bug 40210; bugfix on
+      0.2.8.1-alpha. Thanks to Bernhard Übelacker, Arnd Bergmann and
+      weasel for diagnosing this.
+
+  o Minor features (documentation):
+    - Mention the "!badexit" directive that can appear in an authority's
+      approved-routers file, and update the description of the
+      "!invalid" directive. Closes ticket 40188.
+
+  o Minor bugfixes (compilation):
+    - Fix a compilation warning about unreachable fallthrough
+      annotations when building with "--enable-all-bugs-are-fatal" on
+      some compilers. Fixes bug 40241; bugfix on 0.3.5.4-alpha.
+    - Fix the "--enable-static-tor" switch to properly set the "-static"
+      compile option onto the tor binary only. Fixes bug 40111; bugfix
+      on 0.2.3.1-alpha.
+
+  o Minor bugfixes (config, bridge):
+    - Really fix the case where torrc has a missing ClientTransportPlugin
+      but is configured with a Bridge line and UseBridges. Previously,
+      we didn't look at the managed proxy list and thus would fail for
+      the "exec" case. Fixes bug 40106; bugfix on 0.4.5.1-alpha.
+
+  o Minor bugfixes (logging, relay):
+    - Log our address as reported by the directory authorities, if none
+      was configured or detected before. Fixes bug 40201; bugfix
+      on 0.4.5.1-alpha.
+    - When a launching bandwidth testing circuit, don't incorrectly call
+      it a reachability test, or trigger a "CHECKING_REACHABILITY"
+      control event. Fixes bug 40205; bugfix on 0.4.5.1-alpha.
+
+  o Minor bugfixes (relay, statistics):
+    - Report the correct connection statistics in our extrainfo
+      documents. Previously there was a problem in the file loading
+      function which would wrongly truncate a state file, causing the
+      wrong information to be reported. Fixes bug 40226; bugfix
+      on 0.4.5.1-alpha.
+
+  o Minor bugfixes (SOCKS5):
+    - Handle partial SOCKS5 messages correctly. Previously, our code
+      would send an incorrect error message if it got a SOCKS5 request
+      that wasn't complete. Fixes bug 40190; bugfix on 0.3.5.1-alpha.
+
+
 Changes in version 0.4.5.2-alpha - 2020-11-23
   Tor 0.4.5.2-alpha is the second alpha release in the 0.4.5.x series.
   It fixes several bugs present in earlier releases, including one that
